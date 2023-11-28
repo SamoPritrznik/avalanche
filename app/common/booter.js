@@ -3,7 +3,7 @@ import { UpdateSystem } from '../engine/systems/UpdateSystem.js';
 
 import { GLTFLoader } from '../engine/loaders/GLTFLoader.js';
 import { UnlitRenderer } from '../engine/renderers/UnlitRenderer.js';
-import { FirstPersonController } from '../engine/controllers/FirstPersonController.js';
+import { ThirdPersonController } from '../engine/controllers/ThirdPersonController.js';
 
 import { Camera, Model } from '../engine/core.js';
 
@@ -18,6 +18,7 @@ import { Physics } from './Physics.js';
 const canvas = document.querySelector('canvas');
 
 const renderer = new UnlitRenderer(canvas);
+
 await renderer.initialize();
 
 const loader = new GLTFLoader();
@@ -25,14 +26,16 @@ await loader.load('../models/scene.gltf');
 
 const scene = loader.loadScene(loader.defaultScene);
 
+const character = loader.loadNode('Character');
 const camera = loader.loadNode('Camera');
 
-camera.addComponent(new FirstPersonController(camera, canvas));
-camera.isDynamic = true;
-camera.aabb = {
+character.addComponent(new ThirdPersonController(camera, character, canvas));
+character.isDynamic = true;
+character.aabb = {
     min: [-0.2, -0.2, -0.2],
     max: [0.2, 0.2, 0.2],
 };
+
 
 loader.loadNode('Box.000').isStatic = true;
 loader.loadNode('Box.001').isStatic = true;
@@ -56,6 +59,8 @@ scene.traverse(node => {
     node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
 });
 
+
+
 function update(time, dt) {
     scene.traverse(node => {
         for (const component of node.components) {
@@ -76,3 +81,4 @@ function resize({ displaySize: { width, height }}) {
 
 new ResizeSystem({ canvas, resize }).start();
 new UpdateSystem({ update, render }).start();
+

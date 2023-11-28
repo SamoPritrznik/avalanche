@@ -2,24 +2,29 @@ import { quat, vec3, mat4 } from '../../../lib/gl-matrix-module.js';
 
 import { Transform } from '../core/Transform.js';
 
-export class FirstPersonController {
+export class ThirdPersonController {
 
-    constructor(node, domElement, {
+    constructor(node_camera, node_character, domElement, {
         pitch = 0,
         yaw = 0,
+        distance = 5,
+        target = [0, 0, 0],
         velocity = [0, 0, 0],
-        acceleration = 50,
-        maxSpeed = 5,
+        acceleration = 5,
+        maxSpeed = 40,
         decay = 0.99999,
         pointerSensitivity = 0.002,
     } = {}) {
-        this.node = node;
+        this.node_camera = node_camera;
+        this.node_character = node_character;
         this.domElement = domElement;
 
         this.keys = {};
 
         this.pitch = pitch;
         this.yaw = yaw;
+        this.distance = distance;
+        this.target = target;
 
         this.velocity = velocity;
         this.acceleration = acceleration;
@@ -31,9 +36,11 @@ export class FirstPersonController {
     }
 
     initHandlers() {
+        // handle keydown for camera and character
         this.pointermoveHandler = this.pointermoveHandler.bind(this);
         this.keydownHandler = this.keydownHandler.bind(this);
         this.keyupHandler = this.keyupHandler.bind(this);
+
 
         const element = this.domElement;
         const doc = element.ownerDocument;
@@ -49,6 +56,7 @@ export class FirstPersonController {
                 doc.removeEventListener('pointermove', this.pointermoveHandler);
             }
         });
+        
     }
 
     update(t, dt) {
@@ -92,18 +100,20 @@ export class FirstPersonController {
             vec3.scale(this.velocity, this.velocity, this.maxSpeed / speed);
         }
 
-        const transform = this.node.getComponentOfType(Transform);
+        // Update position based on velocity.
+        const transform = this.node_character.getComponentOfType(Transform);
         if (transform) {
-            // Update translation based on velocity.
             vec3.scaleAndAdd(transform.translation,
                 transform.translation, this.velocity, dt);
 
-            // Update rotation based on the Euler angles.
-            const rotation = quat.create();
-            quat.rotateY(rotation, rotation, this.yaw);
-            quat.rotateX(rotation, rotation, this.pitch);
-            transform.rotation = rotation;
         }
+
+        const transform2 = this.node_camera.getComponentOfType(Transform);
+        if (transform2) {
+            vec3.scaleAndAdd(transform2.translation,
+                transform2.translation, this.velocity, dt);
+        }
+        
     }
 
     pointermoveHandler(e) {
@@ -120,12 +130,11 @@ export class FirstPersonController {
         this.yaw = ((this.yaw % twopi) + twopi) % twopi;
     }
 
-    keydownHandler(e) {
-        this.keys[e.code] = true;
+    keydownHandler(event) {
+        this.keys[event.code] = true;
     }
 
-    keyupHandler(e) {
-        this.keys[e.code] = false;
+    keyupHandler(event) {
+        this.keys[event.code] = false;
     }
-
 }

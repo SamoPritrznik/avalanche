@@ -66,6 +66,7 @@ export class UnlitRenderer extends BaseRenderer {
         gl.uniformMatrix4fv(uniforms.uModelMatrix, false, modelMatrix);
 
         const models = getModels(node);
+        
         for (const model of models) {
             for (const primitive of model.primitives) {
                 this.renderPrimitive(primitive);
@@ -86,6 +87,7 @@ export class UnlitRenderer extends BaseRenderer {
         gl.bindVertexArray(vao);
 
         const material = primitive.material;
+        
         gl.uniform4fv(uniforms.uBaseFactor, material.baseFactor);
 
         gl.activeTexture(gl.TEXTURE0);
