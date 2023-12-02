@@ -27,7 +27,9 @@ await loader.load('../models/scene.gltf');
 const scene = loader.loadScene(loader.defaultScene);
 
 const character = loader.loadNode('Character');
+
 const camera = loader.loadNode('Camera');
+debugger;
 
 character.addComponent(new ThirdPersonController(camera, character, canvas));
 character.isDynamic = true;
@@ -36,7 +38,10 @@ character.aabb = {
     max: [0.2, 0.2, 0.2],
 };
 
+//debugger;
 
+
+loader.loadNode('Coin.000').isColectable = true;
 loader.loadNode('Box.000').isStatic = true;
 loader.loadNode('Box.001').isStatic = true;
 loader.loadNode('Box.002').isStatic = true;
@@ -47,6 +52,7 @@ loader.loadNode('Wall.000').isStatic = true;
 loader.loadNode('Wall.001').isStatic = true;
 loader.loadNode('Wall.002').isStatic = true;
 loader.loadNode('Wall.003').isStatic = true;
+loader.loadNode('Floor').isStatic = true;
 
 const physics = new Physics(scene);
 scene.traverse(node => {
@@ -58,8 +64,6 @@ scene.traverse(node => {
     const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
     node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
 });
-
-
 
 function update(time, dt) {
     scene.traverse(node => {
@@ -76,6 +80,7 @@ function render() {
 }
 
 function resize({ displaySize: { width, height }}) {
+    //debugger;
     camera.getComponentOfType(Camera).aspect = width / height;
 }
 

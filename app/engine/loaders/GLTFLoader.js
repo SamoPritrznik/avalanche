@@ -427,6 +427,25 @@ export class GLTFLoader {
         return camera;
     }
 
+    removeNode(node) {
+        if (node instanceof Node) {
+            // Remove the node from the cache
+            this.cache.delete(node);
+    
+            // Remove the node from its parent
+            const parent = node.getParent();
+            if (parent) {
+                parent.removeChild(node);
+            }
+    
+            // Remove the node's components
+            const components = node.getComponents();
+            for (const component of components) {
+                node.removeComponent(component);
+            }
+        }
+    }
+
     loadNode(nameOrIndex) {
         const gltfSpec = this.findByNameOrIndex(this.gltf.nodes, nameOrIndex);
         if (!gltfSpec) {
@@ -479,3 +498,5 @@ export class GLTFLoader {
     }
 
 }
+
+

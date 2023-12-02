@@ -11,8 +11,10 @@ export class ThirdPersonController {
         target = [0, 0, 0],
         velocity = [0, 0, 0],
         acceleration = 5,
+        forwardAcceleration = 1,
+        gravity = 0.5,
         maxSpeed = 40,
-        decay = 0.99999,
+        decay = 0.3,
         pointerSensitivity = 0.002,
     } = {}) {
         this.node_camera = node_camera;
@@ -28,6 +30,7 @@ export class ThirdPersonController {
 
         this.velocity = velocity;
         this.acceleration = acceleration;
+        this.forwardAcceleration = forwardAcceleration;
         this.maxSpeed = maxSpeed;
         this.decay = decay;
         this.pointerSensitivity = pointerSensitivity;
@@ -65,15 +68,9 @@ export class ThirdPersonController {
         const sin = Math.sin(this.yaw);
         const forward = [-sin, 0, -cos];
         const right = [cos, 0, -sin];
-
+    
         // Map user input to the acceleration vector.
         const acc = vec3.create();
-        if (this.keys['KeyW']) {
-            vec3.add(acc, acc, forward);
-        }
-        if (this.keys['KeyS']) {
-            vec3.sub(acc, acc, forward);
-        }
         if (this.keys['KeyD']) {
             vec3.add(acc, acc, right);
         }
@@ -81,14 +78,33 @@ export class ThirdPersonController {
             vec3.sub(acc, acc, right);
         }
 
+        // Apply gravity if object is in the air.
+        if (this.node_character.getComponentOfType(Transform).translation[1] > 0.5) {
+            vec3.add(acc, acc, [0, -0.5, 0]);
+        }
+
+        // set jump based on spacebar and if the character is on the ground
+        if (this.keys['Space']) {
+            vec3.add(acc, acc, [0, 1, 0]);
+        }
+
+        
+
+        // Normalize acceleration vector.
+        vec3.normalize(acc, acc);
+
+        // Always move forward, with acceleration based on time.
+        vec3.add(acc, acc, forward, dt * this.forwardAcceleration);
+        
+        // increment acceleration based on time
+        this.forwardAcceleration += dt * this.forwardAcceleration;
+
         // Update velocity based on acceleration.
         vec3.scaleAndAdd(this.velocity, this.velocity, acc, dt * this.acceleration);
 
         // If there is no user input, apply decay.
-        if (!this.keys['KeyW'] &&
-            !this.keys['KeyS'] &&
-            !this.keys['KeyD'] &&
-            !this.keys['KeyA'])
+        if (
+            !this.keys['KeyD'] && !this.keys['KeyA'] && !this.keys['Space'])
         {
             const decay = Math.exp(dt * Math.log(1 - this.decay));
             vec3.scale(this.velocity, this.velocity, decay);
@@ -100,34 +116,16 @@ export class ThirdPersonController {
             vec3.scale(this.velocity, this.velocity, this.maxSpeed / speed);
         }
 
-        // Update position based on velocity.
+        // Update position based on velocity. bind the camera to the character
         const transform = this.node_character.getComponentOfType(Transform);
         if (transform) {
-            vec3.scaleAndAdd(transform.translation,
-                transform.translation, this.velocity, dt);
-
-        }
-
-        const transform2 = this.node_camera.getComponentOfType(Transform);
-        if (transform2) {
-            vec3.scaleAndAdd(transform2.translation,
-                transform2.translation, this.velocity, dt);
+            vec3.scaleAndAdd(transform.translation, transform.translation, this.velocity, dt);
+            this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 2, transform.translation[2] + 3];
         }
         
     }
 
     pointermoveHandler(e) {
-        const dx = e.movementX;
-        const dy = e.movementY;
-
-        this.pitch -= dy * this.pointerSensitivity;
-        this.yaw   -= dx * this.pointerSensitivity;
-
-        const twopi = Math.PI * 2;
-        const halfpi = Math.PI / 2;
-
-        this.pitch = Math.min(Math.max(this.pitch, -halfpi), halfpi);
-        this.yaw = ((this.yaw % twopi) + twopi) % twopi;
     }
 
     keydownHandler(event) {

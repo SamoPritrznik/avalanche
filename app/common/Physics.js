@@ -12,7 +12,7 @@ export class Physics {
         this.scene.traverse(node => {
             if (node.isDynamic) {
                 this.scene.traverse(other => {
-                    if (node !== other && other.isStatic) {
+                    if (node !== other && (other.isStatic || other.isColectable)) {
                         this.resolveCollision(node, other);
                     }
                 });
@@ -66,6 +66,18 @@ export class Physics {
         }
 
         console.log('Collision detected!');
+        //check if its a collectable
+        if(b.isColectable){
+            console.log('Collectable!');
+            //remove the node
+            //debugger;
+            //remove the node from the scene
+            for(let i = 0; i < this.scene.children.length; i++){
+                if(this.scene.children[i] === b){
+                    this.scene.children.splice(i, 1);
+                }
+            }
+        }
 
         // Move node A minimally to avoid collision.
         const diffa = vec3.sub(vec3.create(), bBox.max, aBox.min);
