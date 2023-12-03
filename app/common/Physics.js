@@ -77,6 +77,10 @@ export class Physics {
                     this.scene.children.splice(i, 1);
                 }
             }
+
+            //load the a new scene2.gltf
+            console.log('Loading new scene...');
+            
         }
 
         // Move node A minimally to avoid collision.

@@ -80,31 +80,31 @@ export class ThirdPersonController {
 
         // Apply gravity if object is in the air.
         if (this.node_character.getComponentOfType(Transform).translation[1] > 0.5) {
-            vec3.add(acc, acc, [0, -0.5, 0]);
+            vec3.add(acc, acc, [0, -1, 0]);
         }
-
-        // set jump based on spacebar and if the character is on the ground
-        if (this.keys['Space']) {
-            vec3.add(acc, acc, [0, 1, 0]);
+ 
+        // jump without acceleration if space is clicked and is on the floor
+        if (this.keys['Space'] && this.node_character.getComponentOfType(Transform).translation[1] < 2) {
+            let prevAccel = this.acceleration;
+            this.acceleration = 10000000000000;
+            vec3.add(acc, acc, [0, 3, 0]);
         }
-
-        
 
         // Normalize acceleration vector.
-        vec3.normalize(acc, acc);
+        //vec3.normalize(acc, acc);
+
+        // Update velocity based on acceleration.
+        this.forwardAcceleration = this.forwardAcceleration + 0.01;
 
         // Always move forward, with acceleration based on time.
         vec3.add(acc, acc, forward, dt * this.forwardAcceleration);
-        
-        // increment acceleration based on time
-        this.forwardAcceleration += dt * this.forwardAcceleration;
 
         // Update velocity based on acceleration.
-        vec3.scaleAndAdd(this.velocity, this.velocity, acc, dt * this.acceleration);
+        vec3.scaleAndAdd(this.velocity, this.velocity, acc, dt * this.forwardAcceleration);
 
         // If there is no user input, apply decay.
         if (
-            !this.keys['KeyD'] && !this.keys['KeyA'] && !this.keys['Space'])
+            !this.keys['KeyD'] && !this.keys['KeyA'])
         {
             const decay = Math.exp(dt * Math.log(1 - this.decay));
             vec3.scale(this.velocity, this.velocity, decay);
@@ -129,10 +129,24 @@ export class ThirdPersonController {
     }
 
     keydownHandler(event) {
-        this.keys[event.code] = true;
+        if (event.code === 'Space' && !this.keys['Space']) {
+            // Jump only if the Space key was not previously pressed
+            this.keys['Space'] = true;
+            
+            // Trigger the jump logic here
+            // ...
+        } else {
+            this.keys[event.code] = true;
+        }
     }
 
     keyupHandler(event) {
         this.keys[event.code] = false;
+
+        // Reset the state of the Space key when released
+        if (event.code === 'Space') {
+            this.keys['Space'] = false;
+        }
+
     }
 }

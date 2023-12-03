@@ -14,6 +14,37 @@ import {
 
 import { Physics } from './Physics.js';
 
+// Function to load a new scene
+async function loadNewScene() {
+    const loader2 = new GLTFLoader();
+    await loader2.load('../models/scene2.gltf');
+
+    // Assuming the new scene is loaded into the same variable (`scene`)
+    var newScene = loader2.loadScene(loader.defaultScene);
+    //debugger;
+    
+    // Copy the scene's children into the old scene
+    for (let i = 0; i < newScene.children.length; i++) {
+        //set the new scene's children to the last z position of the old scene
+        newScene.children[i].components[0].translation[2] = scene.children[scene.children.length - 1].components[0].translation[2];
+        //add the child to the scene
+        scene.children.push(newScene.children[i]);
+    }
+    //debugger;
+    loader2.loadNode('Floor.001').isStatic = true;
+
+    const physics = new Physics(scene);
+    scene.traverse(node => {
+        const model = node.getComponentOfType(Model);
+        if (!model) {
+            return;
+        }
+
+        const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
+        node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
+    });
+}
+
 
 const canvas = document.querySelector('canvas');
 
@@ -22,14 +53,14 @@ const renderer = new UnlitRenderer(canvas);
 await renderer.initialize();
 
 const loader = new GLTFLoader();
+
 await loader.load('../models/scene.gltf');
 
-const scene = loader.loadScene(loader.defaultScene);
+var scene = loader.loadScene(loader.defaultScene);
 
 const character = loader.loadNode('Character');
 
 const camera = loader.loadNode('Camera');
-debugger;
 
 character.addComponent(new ThirdPersonController(camera, character, canvas));
 character.isDynamic = true;
@@ -52,7 +83,8 @@ loader.loadNode('Wall.000').isStatic = true;
 loader.loadNode('Wall.001').isStatic = true;
 loader.loadNode('Wall.002').isStatic = true;
 loader.loadNode('Wall.003').isStatic = true;
-loader.loadNode('Floor').isStatic = true;
+loader.loadNode('Floor.002').isStatic = true;
+//loader.loadNode('Floor.001').isStatic = true;
 
 const physics = new Physics(scene);
 scene.traverse(node => {
@@ -73,6 +105,10 @@ function update(time, dt) {
     });
 
     physics.update(time, dt);
+
+    if(character.getComponentOfType(ThirdPersonController).keys['KeyR']) {
+        loadNewScene();
+    }
 }
 
 function render() {
@@ -86,4 +122,3 @@ function resize({ displaySize: { width, height }}) {
 
 new ResizeSystem({ canvas, resize }).start();
 new UpdateSystem({ update, render }).start();
-

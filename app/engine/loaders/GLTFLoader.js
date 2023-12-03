@@ -376,6 +376,7 @@ export class GLTFLoader {
             }
 
             const options = {};
+            //debugger;
             options.mesh = this.createMeshFromPrimitive(primitiveSpec);
 
             if (primitiveSpec.material !== undefined) {
@@ -468,7 +469,8 @@ export class GLTFLoader {
         if (gltfSpec.camera !== undefined) {
             node.addComponent(this.loadCamera(gltfSpec.camera));
         }
-
+        
+        //debugger;
         if (gltfSpec.mesh !== undefined) {
             node.addComponent(this.loadMesh(gltfSpec.mesh));
         }
@@ -487,6 +489,7 @@ export class GLTFLoader {
         }
 
         const scene = new Node();
+        
         if (gltfSpec.nodes) {
             for (const nodeIndex of gltfSpec.nodes) {
                 scene.addChild(this.loadNode(nodeIndex));
