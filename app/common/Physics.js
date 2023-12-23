@@ -12,7 +12,7 @@ export class Physics {
         this.scene.traverse(node => {
             if (node.isDynamic) {
                 this.scene.traverse(other => {
-                    if (node !== other && (other.isStatic || other.isColectable)) {
+                    if (node !== other && (other.isStatic || other.isColectable || other.isGenerate)) {
                         this.resolveCollision(node, other);
                     }
                 });
@@ -77,10 +77,18 @@ export class Physics {
                     this.scene.children.splice(i, 1);
                 }
             }
+        }
 
-            //load the a new scene2.gltf
-            console.log('Loading new scene...');
+        if(b.isGenerate) {
+            console.log('Generating!');
+            for(let i = 0; i < this.scene.children.length; i++){
+                if(this.scene.children[i] === b){
+                    this.scene.children.splice(i, 1);
+                }
+            }
             
+            // send a signal to the loader to generate a new scene
+            this.scene.newScene = true;
         }
 
         // Move node A minimally to avoid collision.

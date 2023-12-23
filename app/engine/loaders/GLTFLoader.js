@@ -21,6 +21,8 @@ import {
 
 export class GLTFLoader {
 
+    newScene = false;
+
     // Loads the GLTF JSON file and all buffers and images that it references.
     // It also creates a cache for all future resource loading.
     async load(url) {
@@ -445,6 +447,15 @@ export class GLTFLoader {
                 node.removeComponent(component);
             }
         }
+    }
+
+    getNode(nameOrIndex) {
+        const gltfSpec = this.findByNameOrIndex(this.gltf.nodes, nameOrIndex);
+        if (!gltfSpec) {
+            return null;
+        }
+
+        return this.cache.get(gltfSpec);
     }
 
     loadNode(nameOrIndex) {
