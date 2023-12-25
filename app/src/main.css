@@ -9,3 +9,72 @@ body {
     height: 100%;
     width: 100%;   
 }
+
+#header {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+#score {
+    font-size: 30px;
+}
+
+.sound-size {
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.close-size {
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.footer-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.body-wrapper {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 40px 0;
+}
+
+.header-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-overlay {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.menu {
+    background: #a13b2b;
+    border: 2px solid black;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 50px black;
+    margin: 15% 30%;
+}
+
+.menu button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px 20px;
+    background: black;
+    color: white;
+    border-radius: 50px;
+    cursor: pointer;
+}

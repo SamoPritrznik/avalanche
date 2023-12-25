@@ -8,6 +8,7 @@ import { ThirdPersonController } from '../engine/controllers/ThirdPersonControll
 import { Camera, Model } from '../engine/core.js';
 
 import { SceneEnums } from './SceneEnums.js';
+import { Menu } from './Menu.js';
 
 import {
     calculateAxisAlignedBoundingBox,
@@ -17,17 +18,29 @@ import {
 import { Physics } from './Physics.js';
 
 function update(time, dt) {
-    scene.traverse(node => {
-        for (const component of node.components) {
-            component.update?.(time, dt);
+    window.addEventListener('keydown', pauseGame);
+
+    isPaused = menu.getState();
+
+    if(!isPaused) {
+        if(scene.newScene) {
+            loadNewScene();
+            scene.newScene = false;
         }
-    });
+
+        scene.traverse(node => {
+            for (const component of node.components) {
+                component.update?.(time, dt);
+            }
+        });
+    }
 
     physics.update(time, dt);
+}
 
-    if(scene.newScene) {
-        loadNewScene(currentFloor, aabb);
-        scene.newScene = false;
+function pauseGame(event) {
+    if(event.code === 'KeyP') {
+        menu.show();
     }
 }
 
@@ -39,12 +52,11 @@ function resize({ displaySize: { width, height }}) {
     camera.getComponentOfType(Camera).aspect = width / height;
 }
 
-// Function to load a new scene
 async function loadNewScene() {
     let loader2 = new GLTFLoader();
     await loader2.load('../models/scene2.gltf');
 
-    var newScene = loader2.loadScene(loader.defaultScene);
+    let newScene = loader2.loadScene(loader.defaultScene);
 
     for (let i = 0; i < newScene.children.length; i++) {
         newScene.children[i].components[0].translation[2] += aabb - (currentFloor.aabb.max[2] - currentFloor.aabb.min[2]);
@@ -54,13 +66,11 @@ async function loadNewScene() {
     loadNodes(loader2, '../models/scene2.gltf');
     setPhysics();
 
-    // Update currentFloor and aabb for the next merge
-    currentFloor = loader2.getNode('Floor.001'); // Assuming 'Floor.001' is the last floor of the new scene
+    currentFloor = loader2.getNode('Floor.001'); 
     aabb -= (currentFloor.aabb.max[2] - currentFloor.aabb.min[2]);
 }
 
 function loadNodes(loader, name) {
-    //debugger;
     SceneEnums.forEach(element => {
         if(element.name === name) {
             if(element.coin != null) {
@@ -114,7 +124,7 @@ const loader = new GLTFLoader();
 
 await loader.load('../models/scene.gltf');
 
-var scene = loader.loadScene(loader.defaultScene);
+let scene = loader.loadScene(loader.defaultScene);
 scene.newScene = false;
 
 const character = loader.loadNode('Character');
@@ -122,8 +132,10 @@ const camera = loader.loadNode('Camera');
 
 loadNodes(loader, '../models/scene.gltf')
 
+let menu = new Menu();
 let currentFloor = loader.getNode('Floor.002');
 let aabb = 0;
+let isPaused = false;
 
 character.addComponent(new ThirdPersonController(camera, character, canvas));
 character.isDynamic = true;

@@ -5,9 +5,35 @@
     <title>Avalanche</title>
     <link rel="stylesheet" href="../src/main.css">
     <script src="../../lib/gl-matrix-min.js"></script>
+
+    <!-- knjiznica za fonte/ikone -->
+    <script src="https://kit.fontawesome.com/bd9dc710ff.js" crossorigin="anonymous"></script>
 </head>
 <body>
     <canvas id="myCanvas"></canvas>
     <script type="module" src="../common/booter.js"></script>
+
+    <div id="menuOverlay" class="menu-overlay">
+        <div class="menu">
+            <div class="header-wrapper">
+                <div> </div>
+                <div id="header">Main Menu</div>
+                <i class="fa-solid fa-rectangle-xmark close-size" id="close"></i>
+            </div>
+            <div class="body-wrapper">
+                <div>
+                    <button id="startGame">Start again</button>
+                    <button id="exit">Main menu</button>
+                </div>
+                <div>
+                    <div id="score">Score: 0</div> 
+                </div>
+            </div>
+            <div class="footer-wrapper">
+                <div></div>
+                <i class="fa-solid fa-volume-high sound-size" id="sound"></i>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
