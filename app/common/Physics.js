@@ -2,8 +2,6 @@ import { vec3, mat4 } from '../../lib/gl-matrix-module.js';
 import { getGlobalModelMatrix } from '../engine/core/SceneUtils.js';
 import { Transform } from '../engine/core.js';
 
-import { End } from './End.js';
-
 export class Physics {
 
     constructor(scene) {

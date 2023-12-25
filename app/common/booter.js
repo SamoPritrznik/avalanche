@@ -25,7 +25,6 @@ function update(time, dt) {
 
     if(physics.getEnd()) {
         end.show(time);
-        //dconsole.log(document.cookie);
     }
 
     if(!isPaused) {
@@ -119,8 +118,6 @@ function setPhysics() {
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
-
-let scores = document.cookie;
 
 const canvas = document.querySelector('canvas');
 

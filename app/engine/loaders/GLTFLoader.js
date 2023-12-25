@@ -165,6 +165,8 @@ export class GLTFLoader {
 
     loadTexture(nameOrIndex) {
         const gltfSpec = this.findByNameOrIndex(this.gltf.textures, nameOrIndex);
+        const gltfSpec2 = this.findByNameOrIndex(this.gltf.nodes, nameOrIndex);
+
         if (!gltfSpec) {
             return null;
         }
@@ -172,6 +174,7 @@ export class GLTFLoader {
             return this.cache.get(gltfSpec);
         }
 
+        //debugger;
         const options = {};
         if (gltfSpec.source !== undefined) {
             options.image = this.loadImage(gltfSpec.source);
@@ -199,6 +202,9 @@ export class GLTFLoader {
 
         const options = {};
         const pbr = gltfSpec.pbrMetallicRoughness;
+
+        //debugger;
+
         if (pbr) {
             if (pbr.baseColorTexture) {
                 options.baseTexture = this.loadTexture(pbr.baseColorTexture.index);

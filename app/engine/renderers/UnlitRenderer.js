@@ -73,7 +73,10 @@ export class UnlitRenderer extends BaseRenderer {
             }
         }
 
+        //debugger;
+
         for (const child of node.children) {
+            if(child.isGenerate) continue;
             this.renderNode(child, modelMatrix);
         }
     }
@@ -92,6 +95,10 @@ export class UnlitRenderer extends BaseRenderer {
 
         gl.activeTexture(gl.TEXTURE0);
         gl.uniform1i(uniforms.uBaseTexture, 0);
+
+        if(!material.baseTexture) {
+            return;
+        }
 
         const glTexture = this.prepareImage(material.baseTexture.image);
         const glSampler = this.prepareSampler(material.baseTexture.sampler);
