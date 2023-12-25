@@ -2,18 +2,21 @@ import { vec3, mat4 } from '../../lib/gl-matrix-module.js';
 import { getGlobalModelMatrix } from '../engine/core/SceneUtils.js';
 import { Transform } from '../engine/core.js';
 
+import { End } from './End.js';
+
 export class Physics {
 
     constructor(scene) {
         this.scene = scene;
         this.numberOfCoins = 0;
+        this.end = false;
     }
 
     update(t, dt) {
         this.scene.traverse(node => {
             if (node.isDynamic) {
                 this.scene.traverse(other => {
-                    if (node !== other && (other.isStatic || other.isColectable || other.isGenerate)) {
+                    if (node !== other && (other.isStatic || other.isColectable || other.isGenerate || other.isObstacle)) {
                         this.resolveCollision(node, other);
                     }
                 });
@@ -29,6 +32,10 @@ export class Physics {
         return this.intervalIntersection(aabb1.min[0], aabb1.max[0], aabb2.min[0], aabb2.max[0])
             && this.intervalIntersection(aabb1.min[1], aabb1.max[1], aabb2.min[1], aabb2.max[1])
             && this.intervalIntersection(aabb1.min[2], aabb1.max[2], aabb2.min[2], aabb2.max[2]);
+    }
+
+    getEnd() {
+        return this.end;
     }
 
     getTransformedAABB(node) {
@@ -64,8 +71,11 @@ export class Physics {
             return;
         }
 
+        if(b.isObstacle) {
+            this.end = true;
+        }
+
         if(b.isColectable){
-            console.log('Collectable!');
             this.numberOfCoins++;
         
             for(let i = 0; i < document.getElementsByClassName('numberOfCoins').length; i++){

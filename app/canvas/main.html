@@ -24,7 +24,7 @@
         <div class="menu">
             <div class="header-wrapper">
                 <div> </div>
-                <div id="header">Main Menu</div>
+                <div class="header">Main Menu</div>
                 <i class="fa-solid fa-rectangle-xmark close-size" id="close"></i>
             </div>
             <div class="body-wrapper">
@@ -42,6 +42,31 @@
             <div class="footer-wrapper">
                 <div></div>
                 <i class="fa-solid fa-volume-high sound-size" id="sound"></i>
+            </div>
+        </div>
+    </div>
+
+    <div id="endOverlay" class="end-overlay">
+        <div class="end">
+            <div class="header">Game over</div>
+            <div class="body-wrapper">
+                <div class="left">
+                    <button id="startGame">Play again</button>
+                    <button id="exitToMenu">Back to menu</button>
+                </div>
+                <div class="right">
+                    <div class="form-wrapper">
+                        <div>Username</div>
+                        <input type="text" id="inputName" placeholder="Enter your username" required>
+                    </div>
+                    <div class="bottom-wrapper">
+                        <button id="saveScore">Save score</button>
+                        <div class="coin-wrapper">
+                            <div id="numberOfCoins" class="numberOfCoins">0</div>
+                            <i class="fa-solid fa-coins coin-size"></i>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

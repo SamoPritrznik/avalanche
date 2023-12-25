@@ -9,6 +9,7 @@ import { Camera, Model } from '../engine/core.js';
 
 import { SceneEnums } from './SceneEnums.js';
 import { Menu } from './Menu.js';
+import { End } from './End.js';
 
 import {
     calculateAxisAlignedBoundingBox,
@@ -20,7 +21,12 @@ import { Physics } from './Physics.js';
 function update(time, dt) {
     window.addEventListener('keydown', pauseGame);
 
-    isPaused = menu.getState();
+    isPaused = menu.getState() || end.getState();
+
+    if(physics.getEnd()) {
+        end.show(time);
+        //dconsole.log(document.cookie);
+    }
 
     if(!isPaused) {
         if(scene.newScene) {
@@ -83,7 +89,7 @@ function loadNodes(loader, name) {
             
             if(element.boxes != null) {
                 element.boxes.forEach(box => {
-                    loader.loadNode(box).isStatic = true;
+                    loader.loadNode(box).isObstacle = true;
                 });
             }
             
@@ -114,6 +120,8 @@ function setPhysics() {
     });
 }
 
+let scores = document.cookie;
+
 const canvas = document.querySelector('canvas');
 
 const renderer = new UnlitRenderer(canvas);
@@ -133,6 +141,8 @@ const camera = loader.loadNode('Camera');
 loadNodes(loader, '../models/scene.gltf')
 
 let menu = new Menu();
+let end = new End();
+
 let currentFloor = loader.getNode('Floor.002');
 let aabb = 0;
 let isPaused = false;
