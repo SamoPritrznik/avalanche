@@ -6,6 +6,7 @@ export class Physics {
 
     constructor(scene) {
         this.scene = scene;
+        this.numberOfCoins = 0;
     }
 
     update(t, dt) {
@@ -55,23 +56,22 @@ export class Physics {
     }
 
     resolveCollision(a, b) {
-        // Get global space AABBs.
         const aBox = this.getTransformedAABB(a);
         const bBox = this.getTransformedAABB(b);
 
-        // Check if there is collision.
         const isColliding = this.aabbIntersection(aBox, bBox);
         if (!isColliding) {
             return;
         }
 
-        console.log('Collision detected!');
-        //check if its a collectable
         if(b.isColectable){
             console.log('Collectable!');
-            //remove the node
-            //debugger;
-            //remove the node from the scene
+            this.numberOfCoins++;
+        
+            for(let i = 0; i < document.getElementsByClassName('numberOfCoins').length; i++){
+                document.getElementsByClassName('numberOfCoins')[i].innerHTML = this.numberOfCoins;
+            }
+
             for(let i = 0; i < this.scene.children.length; i++){
                 if(this.scene.children[i] === b){
                     this.scene.children.splice(i, 1);

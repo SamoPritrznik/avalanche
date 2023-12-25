@@ -13,6 +13,13 @@
     <canvas id="myCanvas"></canvas>
     <script type="module" src="../common/booter.js"></script>
 
+    <div class="coin-overlay">
+        <div class="coin-wrapper">
+            <div id="numberOfCoins"  class="numberOfCoins">0</div>
+            <i class="fa-solid fa-coins coin-size"></i>
+        </div>
+    </div>
+
     <div id="menuOverlay" class="menu-overlay">
         <div class="menu">
             <div class="header-wrapper">
@@ -26,7 +33,10 @@
                     <button id="exit">Main menu</button>
                 </div>
                 <div>
-                    <div id="score">Score: 0</div> 
+                    <div class="coin-wrapper">
+                        <div id="numberOfCoins" class="numberOfCoins">0</div>
+                        <i class="fa-solid fa-coins coin-size"></i>
+                    </div>
                 </div>
             </div>
             <div class="footer-wrapper">

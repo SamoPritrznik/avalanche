@@ -136,6 +136,7 @@ let menu = new Menu();
 let currentFloor = loader.getNode('Floor.002');
 let aabb = 0;
 let isPaused = false;
+let numberOfCoins = 0;
 
 character.addComponent(new ThirdPersonController(camera, character, canvas));
 character.isDynamic = true;

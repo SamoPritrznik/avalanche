@@ -11,7 +11,7 @@ body {
 }
 
 #header {
-    font-size: 30px;
+    font-size: 50px;
     font-weight: bold;
 }
 
@@ -20,12 +20,12 @@ body {
 }
 
 .sound-size {
-    font-size: 20px;
+    font-size: 25px;
     cursor: pointer;
 }
 
 .close-size {
-    font-size: 25px;
+    font-size: 35px;
     cursor: pointer;
 }
 
@@ -39,6 +39,10 @@ body {
     justify-content: space-around;
     align-items: center;
     padding: 40px 0;
+    border: 1px solid black;
+    border-radius: 10px;
+    box-shadow: 5px 5px 10px black;
+    background: grey;
 }
 
 .header-wrapper {
@@ -60,6 +64,35 @@ body {
     text-align: center;
 }
 
+.coin-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+#numberOfCoins {
+    font-size: 55px;
+    font-weight: bold;
+}
+
+.coin-size {
+    padding-left: 15px;
+    font-size: 55px;
+}
+
+.coin-overlay {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20%;
+    height: 20%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .menu {
     background: #a13b2b;
     border: 2px solid black;
@@ -67,6 +100,11 @@ body {
     border-radius: 10px;
     box-shadow: 5px 5px 50px black;
     margin: 15% 30%;
+    width: 40%;
+    height: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .menu button {
@@ -75,6 +113,9 @@ body {
     padding: 10px 20px;
     background: black;
     color: white;
-    border-radius: 50px;
+    border-radius: 24px;
     cursor: pointer;
+    height: 100px;
+    width: 300px;
+    font-size: 20px;
 }
