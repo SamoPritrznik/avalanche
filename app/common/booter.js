@@ -78,8 +78,11 @@ async function loadNewScene() {
 function loadNodes(loader, name) {
     SceneEnums.forEach(element => {
         if(element.name === name) {
+            debugger;
             if(element.coin != null) {
-                loader.loadNode(element.coin).isColectable = true;
+                element.coin.forEach(coin => {
+                    loader.loadNode(coin).isColectable = true;
+                });
             }
             
             if(element.generate != null) {
