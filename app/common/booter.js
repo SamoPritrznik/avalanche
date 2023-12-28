@@ -78,7 +78,6 @@ async function loadNewScene() {
 function loadNodes(loader, name) {
     SceneEnums.forEach(element => {
         if(element.name === name) {
-            debugger;
             if(element.coin != null) {
                 element.coin.forEach(coin => {
                     loader.loadNode(coin).isColectable = true;
@@ -137,6 +136,7 @@ scene.newScene = false;
 
 const character = loader.loadNode('Character');
 const camera = loader.loadNode('Camera');
+debugger;
 
 loadNodes(loader, '../models/scene.gltf')
 
