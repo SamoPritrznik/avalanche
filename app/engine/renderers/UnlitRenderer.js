@@ -91,6 +91,7 @@ export class UnlitRenderer extends BaseRenderer {
 
         const material = primitive.material;
         
+        //debugger;
         gl.uniform4fv(uniforms.uBaseFactor, material.baseFactor);
 
         gl.activeTexture(gl.TEXTURE0);

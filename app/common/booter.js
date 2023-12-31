@@ -63,16 +63,23 @@ async function loadNewScene() {
 
     let newScene = loader2.loadScene(loader.defaultScene);
 
+    currentFloor.forEach(element => {
+        aabb -= (element.aabb.max[2] - element.aabb.min[2]);
+    });
+
     for (let i = 0; i < newScene.children.length; i++) {
-        newScene.children[i].components[0].translation[2] += aabb - (currentFloor.aabb.max[2] - currentFloor.aabb.min[2]);
+        newScene.children[i].components[0].translation[2] += aabb;
         scene.children.push(newScene.children[i]);
     }
     
     loadNodes(loader2, '../models/scene2.gltf');
     setPhysics();
 
-    currentFloor = loader2.getNode('Floor.001'); 
-    aabb -= (currentFloor.aabb.max[2] - currentFloor.aabb.min[2]);
+   
+    
+
+    currentFloor = [];
+    currentFloor.push(loader2.getNode('Floor.001')); 
 }
 
 function loadNodes(loader, name) {
@@ -116,6 +123,7 @@ function setPhysics() {
             return;
         }
     
+        
         const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
@@ -136,14 +144,15 @@ scene.newScene = false;
 
 const character = loader.loadNode('Character');
 const camera = loader.loadNode('Camera');
-debugger;
 
 loadNodes(loader, '../models/scene.gltf')
 
 let menu = new Menu();
 let end = new End();
 
-let currentFloor = loader.getNode('Floor.002');
+let currentFloor = [];
+currentFloor.push(loader.getNode('Floor.002'));
+currentFloor.push(loader.getNode('Floor.003'));
 let aabb = 0;
 let isPaused = false;
 let numberOfCoins = 0;

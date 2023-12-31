@@ -1,9 +1,12 @@
 export const SceneEnums = [{
     name: '../models/scene.gltf',
-    coin: null,
+    coin: ['Flag.001'],
     generate: 'Generate.000',
-    boxes: ['Snowpile.000', 'Snowpile.001','Tree.000','Tree.001',],
-    walls: ['Wall.000', 'Wall.001', 'Wall.002'],
+    boxes: ['Log.001', 'Log.002', 
+    'Pinetree1.003', 'Pinetree1.004', 'Pinetree1.005', 'Pinetree1.006', 'Pinetree1.007', 'Pinetree1.008',
+    'Pinetree2.001', 'Pinetree2.002', 'Pinetree2.003', 'Pinetree2.004', 'Pinetree2.005',
+    'Skis.001', 'Skistick.001', 'Skistick.002'],
+    walls: ['Cube','Cube.003', 'Cube.004', 'Cube.001', 'Cube.002'],
     floors: ['Floor.002','Floor.003'],
 }, {
     name: '../models/scene2.gltf',
