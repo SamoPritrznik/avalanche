@@ -50,7 +50,7 @@ function pauseGame(event) {
 }
 
 function render() {
-    renderer.render(scene, camera);
+    renderer.render(scene, camera, light);
 }
 
 function resize({ displaySize: { width, height }}) {
@@ -67,6 +67,8 @@ async function loadNewScene() {
         aabb -= (element.aabb.max[2] - element.aabb.min[2]);
     });
 
+    light = loader2.loadNode('Light.002');
+
     for (let i = 0; i < newScene.children.length; i++) {
         newScene.children[i].components[0].translation[2] += aabb;
         scene.children.push(newScene.children[i]);
@@ -74,8 +76,7 @@ async function loadNewScene() {
     
     loadNodes(loader2, '../models/scene2.gltf');
     setPhysics();
-
-   
+    
     
 
     currentFloor = [];
@@ -144,6 +145,7 @@ scene.newScene = false;
 
 const character = loader.loadNode('Character');
 const camera = loader.loadNode('Camera');
+let light = loader.loadNode('Light.001');
 
 loadNodes(loader, '../models/scene.gltf')
 

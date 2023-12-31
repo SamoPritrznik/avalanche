@@ -8,6 +8,7 @@ export const SceneEnums = [{
     'Skis.001', 'Skistick.001', 'Skistick.002'],
     walls: ['Cube','Cube.003', 'Cube.004', 'Cube.001', 'Cube.002'],
     floors: ['Floor.002','Floor.003'],
+    lights: null,
 }, {
     name: '../models/scene2.gltf',
     coin: null,
@@ -15,6 +16,7 @@ export const SceneEnums = [{
     boxes: ['Box.006'],
     walls: null,
     floors: ['Floor.001'],
+    lights: ['Light.002'],
 }, {
     // TODO: add more scenes
 }]

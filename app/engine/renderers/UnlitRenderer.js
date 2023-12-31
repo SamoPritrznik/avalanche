@@ -15,6 +15,8 @@ export class UnlitRenderer extends BaseRenderer {
 
     constructor(canvas) {
         super(canvas);
+        this.light = null;
+        this.camera = null;
     }
 
     async initialize() {
@@ -38,21 +40,35 @@ export class UnlitRenderer extends BaseRenderer {
         gl.enable(gl.CULL_FACE);
     }
 
-    render(scene, camera) {
+    render(scene, camera, light) {
         const gl = this.gl;
 
+        // Set viewport and clear buffers
         gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+        // Use shader program
         const { program, uniforms } = this.programs.unlit;
         gl.useProgram(program);
 
+        // Set view and projection matrices
         const viewMatrix = getGlobalViewMatrix(camera);
         const projectionMatrix = getProjectionMatrix(camera);
-
         gl.uniformMatrix4fv(uniforms.uViewMatrix, false, viewMatrix);
         gl.uniformMatrix4fv(uniforms.uProjectionMatrix, false, projectionMatrix);
 
+        this.light = light;
+        this.camera = camera;
+
+        // Set light and view position uniforms
+        const lightPos = light.components[0].translation;
+        const lightColor = [0.4, 0.4, 0.4];
+        gl.uniform3fv(uniforms.uLightPosition, lightPos);
+        gl.uniform3fv(uniforms.uLightColor, lightColor);
+        gl.uniform3fv(uniforms.uViewPosition, camera.components[0].translation);
+        gl.uniform1f(uniforms.uLightIntensity, 3.0);
+
+        // Render the scene
         this.renderNode(scene);
     }
 
@@ -83,33 +99,46 @@ export class UnlitRenderer extends BaseRenderer {
 
     renderPrimitive(primitive) {
         const gl = this.gl;
-
         const { program, uniforms } = this.programs.unlit;
 
+        // Prepare the mesh for rendering
         const vao = this.prepareMesh(primitive.mesh);
         gl.bindVertexArray(vao);
 
+        // Set material properties
         const material = primitive.material;
-        
-        //debugger;
         gl.uniform4fv(uniforms.uBaseFactor, material.baseFactor);
 
-        gl.activeTexture(gl.TEXTURE0);
-        gl.uniform1i(uniforms.uBaseTexture, 0);
+        // Phong lighting uniforms
+        const lightPosition = this.light.components[0].translation; // Assuming light has a Transform component
+        const viewPosition = this.camera.components[0].translation; // Assuming camera has a Transform component
 
-        if(!material.baseTexture) {
-            return;
+        const specularReflectivity = [4, 4, 4]; // Example value, adjust as needed
+        const shininess = 100; // Example value, adjust as needed
+        const diffuseReflectivity = material.baseFactor.slice(0, 3); // Extract RGB, ignore alpha
+        const ambientReflectivity = diffuseReflectivity.map(c => c * 0.1);
+
+        gl.uniform3fv(uniforms.uLightPosition, lightPosition);
+        gl.uniform3fv(uniforms.uViewPosition, viewPosition);
+
+        gl.uniform3fv(uniforms.uAmbientReflectivity, ambientReflectivity);
+        gl.uniform3fv(uniforms.uDiffuseReflectivity, diffuseReflectivity);
+        gl.uniform3fv(uniforms.uSpecularReflectivity, specularReflectivity);
+        gl.uniform1f(uniforms.uShininess, shininess);
+
+
+        // Bind texture if available
+        if (material.baseTexture) {
+            gl.activeTexture(gl.TEXTURE0);
+            gl.uniform1i(uniforms.uBaseTexture, 0);
+            const glTexture = this.prepareImage(material.baseTexture.image);
+            const glSampler = this.prepareSampler(material.baseTexture.sampler);
+            gl.bindTexture(gl.TEXTURE_2D, glTexture);
+            gl.bindSampler(0, glSampler);
         }
 
-        const glTexture = this.prepareImage(material.baseTexture.image);
-        const glSampler = this.prepareSampler(material.baseTexture.sampler);
-
-        gl.bindTexture(gl.TEXTURE_2D, glTexture);
-        gl.bindSampler(0, glSampler);
-
+        // Draw the primitive
         gl.drawElements(gl.TRIANGLES, primitive.mesh.indices.length, gl.UNSIGNED_INT, 0);
-
         gl.bindVertexArray(null);
     }
-
 }

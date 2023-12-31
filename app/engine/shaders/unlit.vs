@@ -1,15 +1,24 @@
-#version 300 es
+#version 100
 
-layout (location = 0) in vec4 aPosition;
-layout (location = 1) in vec2 aTexCoord;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;  // Texture coordinate attribute
 
 uniform mat4 uModelMatrix;
 uniform mat4 uViewMatrix;
 uniform mat4 uProjectionMatrix;
 
-out vec2 vTexCoord;
+varying vec2 vTexCoord;    // Pass texture coordinates to fragment shader
+varying vec3 vNormal;
+varying vec3 vFragPos;
 
 void main() {
-    vTexCoord = aTexCoord;
-    gl_Position = uProjectionMatrix * uViewMatrix * uModelMatrix * aPosition;
+    vTexCoord = aTexCoord;  // Pass the texture coordinate to the fragment shader
+
+    // Standard transformation code
+    vec4 fragPos = uModelMatrix * vec4(aPosition, 1.0);
+    vFragPos = vec3(fragPos);
+    vNormal = mat3(uModelMatrix) * aNormal;
+
+    gl_Position = uProjectionMatrix * uViewMatrix * fragPos;
 }

@@ -4,11 +4,39 @@
 		"version":"2.0"
 	},
 	"extensionsUsed":[
-		"KHR_texture_transform"
+		"KHR_texture_transform",
+		"KHR_lights_punctual"
 	],
 	"extensionsRequired":[
-		"KHR_texture_transform"
+		"KHR_texture_transform",
+		"KHR_lights_punctual"
 	],
+	"extensions":{
+		"KHR_lights_punctual":{
+			"lights":[
+				{
+					"color":[
+						1,
+						1,
+						1
+					],
+					"intensity":683,
+					"type":"directional",
+					"name":"Sun.004"
+				},
+				{
+					"color":[
+						1,
+						1,
+						1
+					],
+					"intensity":683,
+					"type":"directional",
+					"name":"Sun.003"
+				}
+			]
+		}
+	},
 	"scene":0,
 	"scenes":[
 		{
@@ -40,13 +68,13 @@
 				23,
 				24,
 				25,
-				26
+				26,
+				27
 			]
 		},
 		{
 			"name":"test.002",
 			"nodes":[
-				27,
 				28,
 				29,
 				30,
@@ -71,7 +99,9 @@
 				49,
 				50,
 				51,
-				52
+				52,
+				53,
+				54
 			]
 		}
 	],
@@ -187,10 +217,10 @@
 			"mesh":8,
 			"name":"Flag.001",
 			"rotation":[
-				0.7071068286895752,
-				0,
-				0,
-				0.7071068286895752
+				0.09229598194360733,
+				-0.7010574340820312,
+				0.7010573148727417,
+				0.09229598939418793
 			],
 			"translation":[
 				0,
@@ -469,6 +499,25 @@
 			]
 		},
 		{
+			"extensions":{
+				"KHR_lights_punctual":{
+					"light":0
+				}
+			},
+			"name":"Light.001",
+			"rotation":[
+				-0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				0,
+				2,
+				-22
+			]
+		},
+		{
 			"mesh":15,
 			"name":"Floor.007",
 			"translation":[
@@ -523,6 +572,25 @@
 				-8,
 				0,
 				-9
+			]
+		},
+		{
+			"extensions":{
+				"KHR_lights_punctual":{
+					"light":1
+				}
+			},
+			"name":"Sun.003",
+			"rotation":[
+				-0.7071068286895752,
+				0,
+				0,
+				0.7071068286895752
+			],
+			"translation":[
+				0,
+				15,
+				-12
 			]
 		},
 		{
