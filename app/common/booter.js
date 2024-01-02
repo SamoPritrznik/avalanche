@@ -138,23 +138,23 @@ await renderer.initialize();
 
 const loader = new GLTFLoader();
 
-await loader.load('../models/scene.gltf');
+await loader.load('../models/scenes.gltf');
 
 let scene = loader.loadScene(loader.defaultScene);
 scene.newScene = false;
 
-const character = loader.loadNode('Character');
-const camera = loader.loadNode('Camera');
-let light = loader.loadNode('Light.001');
+const character = loader.loadNode('Body.002');
+const camera = loader.loadNode('Camera.001');
+let light = loader.loadNode('Point');
 
-loadNodes(loader, '../models/scene.gltf')
+loadNodes(loader, '../models/scenes.gltf')
 
 let menu = new Menu();
 let end = new End();
 
 let currentFloor = [];
-currentFloor.push(loader.getNode('Floor.002'));
-currentFloor.push(loader.getNode('Floor.003'));
+currentFloor.push(loader.getNode('Floor.001'));
+currentFloor.push(loader.getNode('Floor.004'));
 let aabb = 0;
 let isPaused = false;
 let numberOfCoins = 0;
