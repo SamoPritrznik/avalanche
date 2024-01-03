@@ -50,7 +50,7 @@ function pauseGame(event) {
 }
 
 function render() {
-    renderer.render(scene, camera, light);
+    renderer.render(scene, camera, lights);
 }
 
 function resize({ displaySize: { width, height }}) {
@@ -67,8 +67,6 @@ async function loadNewScene() {
         aabb -= (element.aabb.max[2] - element.aabb.min[2]);
     });
 
-    light = loader2.loadNode('Light.002');
-
     for (let i = 0; i < newScene.children.length; i++) {
         newScene.children[i].components[0].translation[2] += aabb;
         scene.children.push(newScene.children[i]);
@@ -76,8 +74,6 @@ async function loadNewScene() {
     
     loadNodes(loader2, '../models/scene2.gltf');
     setPhysics();
-    
-    
 
     currentFloor = [];
     currentFloor.push(loader2.getNode('Floor.001')); 
@@ -86,6 +82,18 @@ async function loadNewScene() {
 function loadNodes(loader, name) {
     SceneEnums.forEach(element => {
         if(element.name === name) {
+            if(element.lights != null) {
+                element.lights.forEach(light => {
+                    lights.push(loader.loadNode(light));
+                });
+            }
+
+            if(element.floors != null) {
+                element.floors.forEach(floor => {
+                    currentFloor.push(loader.loadNode(floor));
+                });
+            }
+
             if(element.coin != null) {
                 element.coin.forEach(coin => {
                     loader.loadNode(coin).isColectable = true;
@@ -97,6 +105,7 @@ function loadNodes(loader, name) {
             }
             
             if(element.boxes != null) {
+                //debugger;
                 element.boxes.forEach(box => {
                     loader.loadNode(box).isObstacle = true;
                 });
@@ -104,7 +113,13 @@ function loadNodes(loader, name) {
             
             if(element.walls != null) {
                 element.walls.forEach(wall => {
-                    loader.loadNode(wall).isStatic = true;
+                    
+                    if(wall.match(/Cube/)) {
+                        //debugger;
+                        loader.loadNode(wall).isSeethrough = true;
+                    } else {
+                        loader.loadNode(wall).isStatic = true;
+                    }
                 });
             }
             
@@ -143,23 +158,22 @@ await loader.load('../models/scenes.gltf');
 let scene = loader.loadScene(loader.defaultScene);
 scene.newScene = false;
 
-const character = loader.loadNode('Body.002');
-const camera = loader.loadNode('Camera.001');
-let light = loader.loadNode('Point');
-
-loadNodes(loader, '../models/scenes.gltf')
+const character = loader.loadNode('Body.001');
+const camera = loader.loadNode('Camera.002');
+let lights = [];
 
 let menu = new Menu();
 let end = new End();
 
 let currentFloor = [];
-currentFloor.push(loader.getNode('Floor.001'));
-currentFloor.push(loader.getNode('Floor.004'));
 let aabb = 0;
 let isPaused = false;
 let numberOfCoins = 0;
 
-character.addComponent(new ThirdPersonController(camera, character, canvas));
+loadNodes(loader, '../models/scenes.gltf');
+let skybox = loader.loadNode('Skybox');
+
+character.addComponent(new ThirdPersonController(camera, character, canvas, skybox));
 character.isDynamic = true;
 character.aabb = {
     min: [-0.2, -0.2, -0.2],

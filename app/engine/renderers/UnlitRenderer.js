@@ -35,7 +35,7 @@ export class UnlitRenderer extends BaseRenderer {
             },
         });
 
-        gl.clearColor(1, 1, 1, 1);
+        gl.clearColor(0.8, 1, 1, 1);
         gl.enable(gl.DEPTH_TEST);
         gl.enable(gl.CULL_FACE);
     }
@@ -61,12 +61,12 @@ export class UnlitRenderer extends BaseRenderer {
         this.camera = camera;
 
         // Set light and view position uniforms
-        const lightPos = light.components[0].translation;
+        const lightPos = light[0].components[0].translation;
         const lightColor = [0.4, 0.4, 0.4];
         gl.uniform3fv(uniforms.uLightPosition, lightPos);
         gl.uniform3fv(uniforms.uLightColor, lightColor);
         gl.uniform3fv(uniforms.uViewPosition, camera.components[0].translation);
-        gl.uniform1f(uniforms.uLightIntensity, 3.0);
+        gl.uniform1f(uniforms.uLightIntensity, 2.0);
 
         // Render the scene
         this.renderNode(scene);
@@ -93,6 +93,7 @@ export class UnlitRenderer extends BaseRenderer {
 
         for (const child of node.children) {
             if(child.isGenerate) continue;
+            if(child.isSeethrough) continue;
             this.renderNode(child, modelMatrix);
         }
     }
@@ -110,13 +111,13 @@ export class UnlitRenderer extends BaseRenderer {
         gl.uniform4fv(uniforms.uBaseFactor, material.baseFactor);
 
         // Phong lighting uniforms
-        const lightPosition = this.light.components[0].translation; // Assuming light has a Transform component
+        const lightPosition = this.light[0].components[0].translation; // Assuming light has a Transform component
         const viewPosition = this.camera.components[0].translation; // Assuming camera has a Transform component
 
-        const specularReflectivity = [4, 4, 4]; // Example value, adjust as needed
-        const shininess = 100; // Example value, adjust as needed
-        const diffuseReflectivity = material.baseFactor.slice(0, 3); // Extract RGB, ignore alpha
-        const ambientReflectivity = diffuseReflectivity.map(c => c * 0.1);
+        const specularReflectivity = [0.2, 0.2, 0.2]; // Example value, adjust as needed
+        const shininess = 10; // Example value, adjust as needed
+        const diffuseReflectivity = [0.1, 0.1, 0.1]; // Extract RGB, ignore alpha
+        const ambientReflectivity = [0.7, 0.7, 0.7];
 
         gl.uniform3fv(uniforms.uLightPosition, lightPosition);
         gl.uniform3fv(uniforms.uViewPosition, viewPosition);
@@ -125,7 +126,6 @@ export class UnlitRenderer extends BaseRenderer {
         gl.uniform3fv(uniforms.uDiffuseReflectivity, diffuseReflectivity);
         gl.uniform3fv(uniforms.uSpecularReflectivity, specularReflectivity);
         gl.uniform1f(uniforms.uShininess, shininess);
-
 
         // Bind texture if available
         if (material.baseTexture) {

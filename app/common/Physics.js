@@ -37,27 +37,36 @@ export class Physics {
     }
 
     getTransformedAABB(node) {
-        // Transform all vertices of the AABB from local to global space.
+        // Retrieve the Transform component which contains translation, rotation, and scale
+        const transform = node.getComponentOfType(Transform);
+    
+        // Scale the min and max points of the AABB
+        const scaledMin = vec3.multiply(vec3.create(), node.aabb.min, transform.scale);
+        const scaledMax = vec3.multiply(vec3.create(), node.aabb.max, transform.scale);
+    
+        // Get the global model matrix (including translation, rotation, and scale)
         const matrix = getGlobalModelMatrix(node);
-        const { min, max } = node.aabb;
+    
+        // List of vertices for the scaled AABB
         const vertices = [
-            [min[0], min[1], min[2]],
-            [min[0], min[1], max[2]],
-            [min[0], max[1], min[2]],
-            [min[0], max[1], max[2]],
-            [max[0], min[1], min[2]],
-            [max[0], min[1], max[2]],
-            [max[0], max[1], min[2]],
-            [max[0], max[1], max[2]],
+            [scaledMin[0], scaledMin[1], scaledMin[2]],
+            [scaledMin[0], scaledMin[1], scaledMax[2]],
+            [scaledMin[0], scaledMax[1], scaledMin[2]],
+            [scaledMin[0], scaledMax[1], scaledMax[2]],
+            [scaledMax[0], scaledMin[1], scaledMin[2]],
+            [scaledMax[0], scaledMin[1], scaledMax[2]],
+            [scaledMax[0], scaledMax[1], scaledMin[2]],
+            [scaledMax[0], scaledMax[1], scaledMax[2]],
         ].map(v => vec3.transformMat4(v, v, matrix));
-
-        // Find new min and max by component.
+    
+        // Find new min and max by component
         const xs = vertices.map(v => v[0]);
         const ys = vertices.map(v => v[1]);
         const zs = vertices.map(v => v[2]);
-        const newmin = [Math.min(...xs), Math.min(...ys), Math.min(...zs)];
-        const newmax = [Math.max(...xs), Math.max(...ys), Math.max(...zs)];
-        return { min: newmin, max: newmax };
+        const newMin = [Math.min(...xs), Math.min(...ys), Math.min(...zs)];
+        const newMax = [Math.max(...xs), Math.max(...ys), Math.max(...zs)];
+    
+        return { min: newMin, max: newMax };
     }
 
     resolveCollision(a, b) {

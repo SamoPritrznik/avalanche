@@ -1,24 +1,36 @@
-#version 100
+#version 300 es
 
-attribute vec3 aPosition;
-attribute vec3 aNormal;
-attribute vec2 aTexCoord;  // Texture coordinate attribute
+// Attributes
+in vec3 aPosition; 
+in vec3 aNormal;   
+in vec2 aTexCoord; 
 
-uniform mat4 uModelMatrix;
-uniform mat4 uViewMatrix;
-uniform mat4 uProjectionMatrix;
+// Uniforms
+uniform mat4 uModelMatrix;      
+uniform mat4 uViewMatrix;       
+uniform mat4 uProjectionMatrix; 
 
-varying vec2 vTexCoord;    // Pass texture coordinates to fragment shader
-varying vec3 vNormal;
-varying vec3 vFragPos;
+// Varyings
+out vec3 vNormal;       
+out vec3 vFragPos;      
+out vec2 vTexCoord;     
 
 void main() {
-    vTexCoord = aTexCoord;  // Pass the texture coordinate to the fragment shader
+    // Transform vertex position into world space
+    vFragPos = vec3(uModelMatrix * vec4(aPosition, 1.0));
 
-    // Standard transformation code
-    vec4 fragPos = uModelMatrix * vec4(aPosition, 1.0);
-    vFragPos = vec3(fragPos);
-    vNormal = mat3(uModelMatrix) * aNormal;
+    // Extract the upper-left 3x3 part of the model matrix
+    mat3 normalMatrix = mat3(uModelMatrix);
 
-    gl_Position = uProjectionMatrix * uViewMatrix * fragPos;
+    // If your model matrix includes non-uniform scaling, compute the inverse transpose
+    // normalMatrix = transpose(inverse(normalMatrix));
+
+    // Transform normals into world space
+    vNormal = normalMatrix * aNormal;
+
+    // Pass the texture coordinate
+    vTexCoord = aTexCoord;
+
+    // Calculate the final position of the vertex
+    gl_Position = uProjectionMatrix * uViewMatrix * vec4(vFragPos, 1.0);
 }

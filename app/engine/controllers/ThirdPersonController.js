@@ -4,7 +4,7 @@ import { Transform } from '../core/Transform.js';
 
 export class ThirdPersonController {
 
-    constructor(node_camera, node_character, domElement, {
+    constructor(node_camera, node_character, domElement, light, {
         pitch = 0,
         yaw = 0,
         distance = 5,
@@ -14,7 +14,7 @@ export class ThirdPersonController {
         forwardAcceleration = 1,
         gravity = 0.5,
         maxSpeed = 40,
-        decay = 0.3,
+        decay = 1,
         pointerSensitivity = 0.002,
     } = {}) {
         this.node_camera = node_camera;
@@ -34,6 +34,8 @@ export class ThirdPersonController {
         this.maxSpeed = maxSpeed;
         this.decay = decay;
         this.pointerSensitivity = pointerSensitivity;
+
+        this.light = light;
 
         this.initHandlers();
     }
@@ -102,14 +104,6 @@ export class ThirdPersonController {
         // Update velocity based on acceleration.
         vec3.scaleAndAdd(this.velocity, this.velocity, acc, dt * this.forwardAcceleration);
 
-        // If there is no user input, apply decay.
-        if (
-            !this.keys['KeyD'] && !this.keys['KeyA'])
-        {
-            const decay = Math.exp(dt * Math.log(1 - this.decay));
-            vec3.scale(this.velocity, this.velocity, decay);
-        }
-
         // Limit speed to prevent accelerating to infinity and beyond.
         const speed = vec3.length(this.velocity);
         if (speed > this.maxSpeed) {
@@ -120,12 +114,15 @@ export class ThirdPersonController {
         const transform = this.node_character.getComponentOfType(Transform);
         if (transform) {
             vec3.scaleAndAdd(transform.translation, transform.translation, this.velocity, dt);
-            this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 2, transform.translation[2] + 3];
+            this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2] + 7];
+            this.light.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2]];
+            console.log(this.light.getComponentOfType(Transform).translation);
         }
         
     }
 
     pointermoveHandler(e) {
+        
     }
 
     keydownHandler(event) {

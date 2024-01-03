@@ -1,49 +1,41 @@
-#version 100
-
+#version 300 es
 precision highp float;
 
-varying vec2 vTexCoord;    // Receive texture coordinates from vertex shader
-varying vec3 vNormal;
-varying vec3 vFragPos;
+// Varyings
+in vec3 vNormal;     
+in vec3 vFragPos;    
+in vec2 vTexCoord;   
 
-uniform sampler2D uTexture; // Texture sampler
-
-uniform vec3 uLightPosition;
-uniform vec3 uViewPosition;
-uniform vec3 uLightColor;
-uniform float uLightIntensity;
-
-uniform vec3 uAmbientReflectivity;
+// Uniforms
+uniform sampler2D uBaseTexture;
+uniform vec4 uBaseFactor;
+uniform vec3 uLightPosition;  
+uniform vec3 uViewPosition;   
+uniform vec3 uAmbientReflectivity;  
 uniform vec3 uDiffuseReflectivity;
 uniform vec3 uSpecularReflectivity;
-uniform float uShininess;
+uniform float uShininess;     
+
+// Output
+out vec4 fragColor; 
 
 void main() {
-    // Sample the texture
-    vec4 texColor = texture2D(uTexture, vTexCoord);
-
-    // Normalize the normal vector
-    vec3 norm = normalize(vNormal);
-
-    // Calculate vectors
-    vec3 lightDir = normalize(uLightPosition - vFragPos);
-    vec3 viewDir = normalize(uViewPosition - vFragPos);
-    vec3 halfwayDir = normalize(lightDir + viewDir);
-
-    vec3 effectiveLightColor = uLightIntensity * uLightColor;
-
     // Ambient component
-    vec3 ambient = uAmbientReflectivity * effectiveLightColor;
+    vec3 ambient = uAmbientReflectivity * uBaseFactor.rgb;
 
     // Diffuse component
+    vec3 norm = normalize(vNormal);
+    vec3 lightDir = normalize(uLightPosition - vFragPos);
     float diff = max(dot(norm, lightDir), 0.0);
-    vec3 diffuse = uDiffuseReflectivity * diff * effectiveLightColor;
+    vec3 diffuse = uDiffuseReflectivity * diff * uBaseFactor.rgb;
 
-    // Blinn-Phong Specular component
-    float spec = pow(max(dot(norm, halfwayDir), 0.0), uShininess);
-    vec3 specular = uSpecularReflectivity * spec * effectiveLightColor;
+    // Specular component
+    vec3 viewDir = normalize(uViewPosition - vFragPos);
+    vec3 reflectDir = reflect(-lightDir, norm);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), uShininess);
+    vec3 specular = uSpecularReflectivity * spec;
 
-    // Combine all components
-    vec3 result = (ambient + diffuse + specular) * texColor.rgb;
-    gl_FragColor = vec4(result, texColor.a); // Use texture's alpha
+    // Calculate final color
+    vec3 finalColor = (ambient + diffuse + specular) * texture(uBaseTexture, vTexCoord).rgb;
+    fragColor = vec4(finalColor, uBaseFactor.a);
 }
