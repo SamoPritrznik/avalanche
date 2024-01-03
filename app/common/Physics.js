@@ -78,6 +78,16 @@ export class Physics {
             return;
         }
 
+        if(a.isProtected) {
+            for(let i = 0; i < this.scene.children.length; i++){
+                if(this.scene.children[i] === b){
+                    this.scene.children.splice(i, 1);
+                }
+            }
+            
+            a.isProtected = false;
+        }
+
         if(b.isObstacle) {
             this.end = true;
         }

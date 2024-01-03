@@ -173,7 +173,7 @@ let numberOfCoins = 0;
 loadNodes(loader, '../models/scenes.gltf');
 let skybox = loader.loadNode('Skybox');
 
-character.addComponent(new ThirdPersonController(camera, character, canvas, skybox));
+character.addComponent(new ThirdPersonController(camera, character, canvas, lights, skybox));
 character.isDynamic = true;
 character.aabb = {
     min: [-0.2, -0.2, -0.2],

@@ -4,7 +4,7 @@ import { Transform } from '../core/Transform.js';
 
 export class ThirdPersonController {
 
-    constructor(node_camera, node_character, domElement, light, {
+    constructor(node_camera, node_character, domElement, light, skybox, {
         pitch = 0,
         yaw = 0,
         distance = 5,
@@ -35,7 +35,8 @@ export class ThirdPersonController {
         this.decay = decay;
         this.pointerSensitivity = pointerSensitivity;
 
-        this.light = light;
+        this.light = light[0];
+        this.skybox = skybox;
 
         this.initHandlers();
     }
@@ -114,9 +115,9 @@ export class ThirdPersonController {
         const transform = this.node_character.getComponentOfType(Transform);
         if (transform) {
             vec3.scaleAndAdd(transform.translation, transform.translation, this.velocity, dt);
-            this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2] + 7];
+            this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2] + 10];
             this.light.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2]];
-            console.log(this.light.getComponentOfType(Transform).translation);
+            this.skybox.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2]];
         }
         
     }
