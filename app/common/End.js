@@ -1,7 +1,7 @@
 export class End {
     constructor(time) {
         this.endOverlay = document.getElementById('endOverlay');
-        this.startGameButton = document.getElementById('startGame');
+        this.startGameButton = document.getElementById('startGameAgain');
         this.exitButton = document.getElementById('exitToMenu');
         this.saveButton = document.getElementById('saveScore');
         this.input = document.getElementById('inputName').value;
@@ -41,6 +41,7 @@ export class End {
     }
 
     refresh() {
+        //debugger;
         window.location.reload();
     }
 

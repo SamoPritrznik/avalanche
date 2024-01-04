@@ -11,10 +11,10 @@ export class ThirdPersonController {
         target = [0, 0, 0],
         velocity = [0, 0, 0],
         acceleration = 5,
-        forwardAcceleration = 1,
+        forwardAcceleration = 4,
         gravity = 0.5,
         maxSpeed = 40,
-        decay = 1,
+        decay = 0.01,
         pointerSensitivity = 0.002,
     } = {}) {
         this.node_camera = node_camera;
@@ -75,35 +75,33 @@ export class ThirdPersonController {
         // Map user input to the acceleration vector.
         const acc = vec3.create();
         if (this.keys['KeyD']) {
-            vec3.add(acc, acc, right);
+            vec3.add(acc, acc, right, 4);
         }
         if (this.keys['KeyA']) {
-            vec3.sub(acc, acc, right);
+            vec3.sub(acc, acc, right, -4);
         }
 
         // Apply gravity if object is in the air.
-        if (this.node_character.getComponentOfType(Transform).translation[1] > 0.5) {
-            vec3.add(acc, acc, [0, -1, 0]);
+        if (this.node_character.getComponentOfType(Transform).translation[1] > 1) {
+            vec3.add(acc, acc, [0, -0.5, 0]);
         }
  
         // jump without acceleration if space is clicked and is on the floor
         if (this.keys['Space'] && this.node_character.getComponentOfType(Transform).translation[1] < 2) {
-            let prevAccel = this.acceleration;
-            this.acceleration = 10000000000000;
-            vec3.add(acc, acc, [0, 3, 0]);
+            vec3.add(acc, acc, [0, 10, 0]);
         }
 
         // Normalize acceleration vector.
         //vec3.normalize(acc, acc);
 
         // Update velocity based on acceleration.
-        this.forwardAcceleration = this.forwardAcceleration + 0.01;
+        //this.forwardAcceleration = this.forwardAcceleration + 0.01;
 
         // Always move forward, with acceleration based on time.
-        vec3.add(acc, acc, forward, dt * this.forwardAcceleration);
+        vec3.add(acc, acc, forward, 0.001);
 
         // Update velocity based on acceleration.
-        vec3.scaleAndAdd(this.velocity, this.velocity, acc, dt * this.forwardAcceleration);
+        vec3.scaleAndAdd(this.velocity, this.velocity, acc, this.forwardAcceleration);
 
         // Limit speed to prevent accelerating to infinity and beyond.
         const speed = vec3.length(this.velocity);

@@ -61,18 +61,19 @@ async function loadNewScene() {
     let loader2 = new GLTFLoader();
     await loader2.load('../models/scene2.gltf');
 
-    let newScene = loader2.loadScene(loader.defaultScene);
+    let newScene = loader2.loadScene(loader2.defaultScene);
 
     currentFloor.forEach(element => {
         aabb -= (element.aabb.max[2] - element.aabb.min[2]);
     });
-
+    
+    loadNodes(loader2, '../models/scene2.gltf');
+    //debugger;
     for (let i = 0; i < newScene.children.length; i++) {
         newScene.children[i].components[0].translation[2] += aabb;
         scene.children.push(newScene.children[i]);
     }
-    
-    loadNodes(loader2, '../models/scene2.gltf');
+
     setPhysics();
 
     currentFloor = [];
@@ -139,11 +140,17 @@ function setPhysics() {
             return;
         }
     
-        
         const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
         node.aabb = mergeAxisAlignedBoundingBoxes(boxes);
     });
 }
+
+function calculateCharacterAABB(character) {
+    const model = character.getComponentOfType(Model);
+    const boxes = model.primitives.map(primitive => calculateAxisAlignedBoundingBox(primitive.mesh));
+    character.aabb = mergeAxisAlignedBoundingBoxes(boxes);
+}
+
 
 const canvas = document.querySelector('canvas');
 
@@ -157,6 +164,7 @@ await loader.load('../models/scenes.gltf');
 
 let scene = loader.loadScene(loader.defaultScene);
 scene.newScene = false;
+
 
 const character = loader.loadNode('Body.001');
 const camera = loader.loadNode('Camera.002');
@@ -175,10 +183,8 @@ let skybox = loader.loadNode('Skybox');
 
 character.addComponent(new ThirdPersonController(camera, character, canvas, lights, skybox));
 character.isDynamic = true;
-character.aabb = {
-    min: [-0.2, -0.2, -0.2],
-    max: [0.2, 0.2, 0.2],
-};
+calculateCharacterAABB(character);
+//debugger;
 
 const physics = new Physics(scene);
 setPhysics();
