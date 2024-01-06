@@ -18,6 +18,8 @@ import {
 
 import { Physics } from './Physics.js';
 
+let changeTime = 0;
+
 function update(time, dt) {
     window.addEventListener('keydown', pauseGame);
 
@@ -26,12 +28,22 @@ function update(time, dt) {
     if(physics.getEnd()) {
         end.show(time);
     }
-
     if(!isPaused) {
-        if(scene.newScene) {
-            loadNewScene();
-            scene.newScene = false;
+        
+        if(scene.newScene && (changeTime === 0 || time - changeTime > 2)) {
+            changeTime = time;
+            if(numberOfScenes % 1 == 0) {
+                sceneQueue.push(scene3);
+                loadNewScene(loader3, scene3);
+                
+            }
+            else {
+                sceneQueue.push(scene2);
+                loadNewScene(loader2, scene2);
+                //debugger;
+            }
         }
+        scene.newScene = false;
 
         scene.traverse(node => {
             for (const component of node.components) {
@@ -57,27 +69,52 @@ function resize({ displaySize: { width, height }}) {
     camera.getComponentOfType(Camera).aspect = width / height;
 }
 
-async function loadNewScene() {
-    let loader2 = new GLTFLoader();
-    await loader2.load('../models/scene2.gltf');
+async function loadNewScene(newLoader, newScene) {
+    scene.newScene = false;
+    numberOfScenes++;
+    console.log(numberOfScenes);
+    //debugger;
+    /*if(numberOfScenes % 3 == 0 && numberOfScenes >= 3) {
+        let oldChildren = sceneQueue.shift().children;
+        // remove the old children
+        
+        for (let i = 0; i < oldChildren.length; i++) {
+            scene.children.splice(i, 1);
+        }
+    }*/
 
-    let newScene = loader2.loadScene(loader2.defaultScene);
+    //debugger;
 
     currentFloor.forEach(element => {
         aabb -= (element.aabb.max[2] - element.aabb.min[2]);
     });
-    
-    loadNodes(loader2, '../models/scene2.gltf');
+
     //debugger;
     for (let i = 0; i < newScene.children.length; i++) {
+        let old = newScene.children[i].components[0].translation[2];
         newScene.children[i].components[0].translation[2] += aabb;
+        //debugger;
         scene.children.push(newScene.children[i]);
+        //newScene.children[i].components[0].translation[2] = old;
     }
 
     setPhysics();
 
     currentFloor = [];
-    currentFloor.push(loader2.getNode('Floor.001')); 
+    console.log(currentFloor);
+    console.log(aabb);
+    //aabb = 0;
+    switch(numberOfScenes % 2) {
+        case 0:
+            currentFloor.push(newLoader.getNode('Floor.009'));
+            currentFloor.push(newLoader.getNode('Floor.010'));
+            return;
+        case 1:
+            currentFloor.push(newLoader.getNode('Floor.007'));
+            currentFloor.push(newLoader.getNode('Floor.008'));
+            return;
+    }
+    //scene2.children = [];
 }
 
 function loadNodes(loader, name) {
@@ -91,7 +128,7 @@ function loadNodes(loader, name) {
 
             if(element.floors != null) {
                 element.floors.forEach(floor => {
-                    currentFloor.push(loader.loadNode(floor));
+                    //currentFloor.push(loader.loadNode(floor));
                 });
             }
 
@@ -108,7 +145,10 @@ function loadNodes(loader, name) {
             if(element.boxes != null) {
                 //debugger;
                 element.boxes.forEach(box => {
-                    loader.loadNode(box).isObstacle = true;
+                    if(loader.loadNode(box) === null) {
+                        debugger;
+                    }
+                    loader.loadNode(box).isStatic = true;
                 });
             }
             
@@ -127,6 +167,7 @@ function loadNodes(loader, name) {
             if(element.floors != null) {
                 element.floors.forEach(floor => {
                     loader.loadNode(floor).isStatic = true;
+                    //currentFloor.push(loader.loadNode(floor));
                 });
             }   
         }
@@ -159,15 +200,23 @@ const renderer = new UnlitRenderer(canvas);
 await renderer.initialize();
 
 const loader = new GLTFLoader();
+const loader2 = new GLTFLoader();
+const loader3 = new GLTFLoader();
 
-await loader.load('../models/scenes.gltf');
+await loader.load('../models/startscene.gltf');
+await loader2.load('../models/scene1.gltf');
+await loader3.load('../models/scene2.gltf');
 
 let scene = loader.loadScene(loader.defaultScene);
+let scene2 = loader2.loadScene(loader2.defaultScene);
+let scene3 = loader3.loadScene(loader3.defaultScene);
 scene.newScene = false;
 
+let sceneQueue = [];
+let numberOfScenes = 0;
 
-const character = loader.loadNode('Body.001');
-const camera = loader.loadNode('Camera.002');
+const character = loader.loadNode('Body.003');
+const camera = loader.loadNode('Camera.003');
 let lights = [];
 
 let menu = new Menu();
@@ -178,8 +227,13 @@ let aabb = 0;
 let isPaused = false;
 let numberOfCoins = 0;
 
-loadNodes(loader, '../models/scenes.gltf');
-let skybox = loader.loadNode('Skybox');
+loadNodes(loader, '../models/startscene.gltf');
+loadNodes(loader2, '../models/scene1.gltf');
+loadNodes(loader3, '../models/scene2.gltf');
+
+let skybox = loader.loadNode('Sphere');
+currentFloor.push(loader.getNode('Floor.015'));
+currentFloor.push(loader.getNode('Floor.016'));
 
 character.addComponent(new ThirdPersonController(camera, character, canvas, lights, skybox));
 character.isDynamic = true;

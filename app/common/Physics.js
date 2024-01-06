@@ -108,13 +108,14 @@ export class Physics {
 
         if(b.isGenerate) {
             console.log('Generating!');
+            
+
             for(let i = 0; i < this.scene.children.length; i++){
                 if(this.scene.children[i] === b){
                     this.scene.children.splice(i, 1);
                 }
             }
-            
-            // send a signal to the loader to generate a new scene
+
             this.scene.newScene = true;
         }
 

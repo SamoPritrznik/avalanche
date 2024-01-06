@@ -115,7 +115,7 @@ export class ThirdPersonController {
             vec3.scaleAndAdd(transform.translation, transform.translation, this.velocity, dt);
             this.node_camera.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2] + 10];
             this.light.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2]];
-            this.skybox.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1] + 3, transform.translation[2]];
+            this.skybox.getComponentOfType(Transform).translation = [transform.translation[0], transform.translation[1]-10, transform.translation[2]];
         }
         
     }
