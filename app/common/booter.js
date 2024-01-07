@@ -32,14 +32,14 @@ function update(time, dt) {
         
         if(scene.newScene && (changeTime === 0 || time - changeTime > 2)) {
             changeTime = time;
-            if(numberOfScenes % 1 == 0) {
+            if(numberOfScenes % 2 == 0) {
                 sceneQueue.push(scene3);
-                loadNewScene(loader3, scene3);
+                loadNewScene(loader3, scene3, '../models/scene2.gltf');
                 
             }
             else {
                 sceneQueue.push(scene2);
-                loadNewScene(loader2, scene2);
+                loadNewScene(loader2, scene2, '../models/scene1.gltf');
                 //debugger;
             }
         }
@@ -69,52 +69,33 @@ function resize({ displaySize: { width, height }}) {
     camera.getComponentOfType(Camera).aspect = width / height;
 }
 
-async function loadNewScene(newLoader, newScene) {
+let translationVector = 0;
+let oldTranslation = [0, 0];
+
+async function loadNewScene(newLoader, newScene, name) {
     scene.newScene = false;
     numberOfScenes++;
-    console.log(numberOfScenes);
-    //debugger;
-    /*if(numberOfScenes % 3 == 0 && numberOfScenes >= 3) {
-        let oldChildren = sceneQueue.shift().children;
-        // remove the old children
+
+    if(numberOfScenes % 2 == 0) {
+        translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[1];
+        oldTranslation[1] += translationVector;
+    }else {
+        translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[0];
+        oldTranslation[0] += translationVector;
+    }
+
+    console.log(translationVector);
+    
+    if (numberOfScenes > 0) {
         
-        for (let i = 0; i < oldChildren.length; i++) {
-            scene.children.splice(i, 1);
-        }
-    }*/
-
-    //debugger;
-
-    currentFloor.forEach(element => {
-        aabb -= (element.aabb.max[2] - element.aabb.min[2]);
-    });
-
-    //debugger;
-    for (let i = 0; i < newScene.children.length; i++) {
-        let old = newScene.children[i].components[0].translation[2];
-        newScene.children[i].components[0].translation[2] += aabb;
-        //debugger;
-        scene.children.push(newScene.children[i]);
-        //newScene.children[i].components[0].translation[2] = old;
+        // Translate the new scene by this vector
+        newScene.children.forEach(child => {
+            child.components[0].translation[2] += translationVector;
+            scene.children.push(child);
+        });
     }
 
     setPhysics();
-
-    currentFloor = [];
-    console.log(currentFloor);
-    console.log(aabb);
-    //aabb = 0;
-    switch(numberOfScenes % 2) {
-        case 0:
-            currentFloor.push(newLoader.getNode('Floor.009'));
-            currentFloor.push(newLoader.getNode('Floor.010'));
-            return;
-        case 1:
-            currentFloor.push(newLoader.getNode('Floor.007'));
-            currentFloor.push(newLoader.getNode('Floor.008'));
-            return;
-    }
-    //scene2.children = [];
 }
 
 function loadNodes(loader, name) {
@@ -242,6 +223,8 @@ calculateCharacterAABB(character);
 
 const physics = new Physics(scene);
 setPhysics();
+
+let sceneAABBs = {'scene0': calculateSceneAABB('../models/startscene.gltf', loader)};
 
 new ResizeSystem({ canvas, resize }).start();
 new UpdateSystem({ update, render }).start();

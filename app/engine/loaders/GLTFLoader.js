@@ -517,6 +517,15 @@ export class GLTFLoader {
         return scene;
     }
 
+    removeScene(nameOrIndex) {
+        const gltfSpec = this.findByNameOrIndex(this.gltf.scenes, nameOrIndex);
+        if (!gltfSpec) {
+            return null;
+        }
+
+        this.cache.delete(gltfSpec);
+    }
+
 }
 
 
