@@ -72,6 +72,23 @@ body {
     align-items: center;
 }
 
+.time-wrapper {
+    display: flex;
+    justify-content: center;
+    height: 100%;
+    align-items: center;
+}
+
+#time {
+    font-size: 55px;
+    font-weight: bold;
+}
+
+.time-size {
+    font-size: 55px;
+    font-weight: bold;
+}
+
 #numberOfCoins {
     font-size: 55px;
     font-weight: bold;
@@ -94,8 +111,20 @@ body {
     text-align: center;
 }
 
+.time-overlay {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20%;
+    height: 20%;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
 .menu {
-    background: #a13b2b;
+    background: #99dfff;
     border: 2px solid black;
     padding: 20px;
     border-radius: 10px;
@@ -176,7 +205,7 @@ button {
     width: 90%;
     height: 90%;
     margin: 2.5% 5%;
-    background: #a13b2b;
+    background: #99dfff;
     border: 2px solid black;
     border-radius: 10px;
     box-shadow: 5px 5px 50px black;

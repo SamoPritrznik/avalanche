@@ -22,6 +22,9 @@ let changeTime = 0;
 
 function update(time, dt) {
     window.addEventListener('keydown', pauseGame);
+    //get element by id
+    let timeS = document.getElementsByClassName('time')[0];
+    timeS.innerHTML = Math.floor(time);
 
     isPaused = menu.getState() || end.getState();
 
