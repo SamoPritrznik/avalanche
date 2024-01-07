@@ -32,19 +32,23 @@ function update(time, dt) {
         
         if(scene.newScene && (changeTime === 0 || time - changeTime > 2)) {
             changeTime = time;
-            if(numberOfScenes % 3 == 0) {
+            if(numberOfScenes % 4 == 0) {
                 sceneQueue.push(scene3);
                 loadNewScene(loader3, scene3, '../models/scene2.gltf');
                 
             }
-            else if (numberOfScenes % 3 == 1) {
+            else if (numberOfScenes % 4 == 1) {
                 sceneQueue.push(scene2);
                 loadNewScene(loader2, scene2, '../models/scene1.gltf');
                 //debugger;
             }
-            else if (numberOfScenes % 3 == 2) {
+            else if (numberOfScenes % 4 == 2) {
                 sceneQueue.push(scene4);
                 loadNewScene(loader4, scene4, '../models/scene3.gltf');
+            }
+            else if (numberOfScenes % 4 == 3) {
+                sceneQueue.push(scene5);
+                loadNewScene(loader5, scene5, '../models/scene4.gltf');
             }
         }
         scene.newScene = false;
@@ -74,22 +78,25 @@ function resize({ displaySize: { width, height }}) {
 }
 
 let translationVector = 0;
-let oldTranslation = [0, 0, 0];
+let oldTranslation = [0, 0, 0, 0];
 
 async function loadNewScene(newLoader, newScene, name) {
     scene.newScene = false;
     numberOfScenes++;
 
-    if(numberOfScenes % 3 == 0) {
+    if(numberOfScenes % 4 == 0) {
         translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[1];
         oldTranslation[1] += translationVector;
-    }else if (numberOfScenes % 3 == 1) {
+    }else if (numberOfScenes % 4 == 1) {
         translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[0];
         oldTranslation[0] += translationVector;
     }
-    else if (numberOfScenes % 3 == 2) {
+    else if (numberOfScenes % 4 == 2) {
         translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[2];
         oldTranslation[2] += translationVector;
+    } else if (numberOfScenes % 4 == 3) {
+        translationVector = -110.71667957305908*(numberOfScenes) - oldTranslation[3];
+        oldTranslation[3] += translationVector;
     }
 
     console.log(translationVector);
@@ -193,16 +200,19 @@ const loader = new GLTFLoader();
 const loader2 = new GLTFLoader();
 const loader3 = new GLTFLoader();
 const loader4 = new GLTFLoader();
+const loader5 = new GLTFLoader();
 
 await loader.load('../models/startscene.gltf');
 await loader2.load('../models/scene1.gltf');
 await loader3.load('../models/scene2.gltf');
 await loader4.load('../models/scene3.gltf');
+await loader5.load('../models/scene4.gltf');
 
 let scene = loader.loadScene(loader.defaultScene);
 let scene2 = loader2.loadScene(loader2.defaultScene);
 let scene3 = loader3.loadScene(loader3.defaultScene);
 let scene4 = loader4.loadScene(loader4.defaultScene);
+let scene5 = loader5.loadScene(loader5.defaultScene);
 scene.newScene = false;
 
 let sceneQueue = [];
@@ -224,6 +234,7 @@ loadNodes(loader, '../models/startscene.gltf');
 loadNodes(loader2, '../models/scene1.gltf');
 loadNodes(loader3, '../models/scene2.gltf');
 loadNodes(loader4, '../models/scene3.gltf');
+loadNodes(loader5, '../models/scene4.gltf');
 
 let skybox = loader.loadNode('Sphere');
 currentFloor.push(loader.getNode('Floor.015'));
