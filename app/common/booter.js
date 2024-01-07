@@ -224,7 +224,6 @@ calculateCharacterAABB(character);
 const physics = new Physics(scene);
 setPhysics();
 
-let sceneAABBs = {'scene0': calculateSceneAABB('../models/startscene.gltf', loader)};
 
 new ResizeSystem({ canvas, resize }).start();
 new UpdateSystem({ update, render }).start();
